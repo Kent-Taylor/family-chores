@@ -10,7 +10,7 @@ app = Flask(__name__)
 heroku = Heroku(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://hifbkeqiknjzwq:624ae0526664acbc4affe23955c0fd89666de604dd90cc1cb7db462fa3566951@ec2-54-235-92-43.compute-1.amazonaws.com:5432/d105fk7c8cklvp"
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
 
 CORS(app)
 
@@ -20,17 +20,19 @@ ma = Marshmallow(app)
 
 class Todo(db.Model):
     __tablename__ = "todos"
+    done = db.Column(db.Boolean)
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    done = db.Column(db.Boolean)
+    category = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, title, done):
+    def __init__(self, title, done, category):
         self.title = title
         self.done = done
+        self.category = category
 
 class TodoSchema(ma.Schema):
     class Meta:
-        fields = ("id", "title", "done")
+        fields = ("id", "title", "done", "category")
 
 todos_schema = TodoSchema(many=True)
 todo_schema = TodoSchema()
@@ -46,8 +48,9 @@ def get_todos():
 def add_todo():
     title = request.json["title"]
     done = request.json["done"]
+    category = request.json["category"]
 
-    record = Todo(title, done)
+    record = Todo(title, done, category)
     db.session.add(record)
     db.session.commit()
 
@@ -61,9 +64,11 @@ def update_todo(id):
 
     title = request.json["title"]
     done = request.json["done"]
+    category = request.json["category"]
 
     todo.title = title
     todo.done = done
+    todo.category = category
 
     db.session.commit()
     return jsonify("UPDATE Successful")
