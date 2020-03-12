@@ -4,13 +4,17 @@ from flask_cors import CORS
 import os
 from flask_marshmallow import Marshmallow
 from flask_heroku import Heroku
+import os
+import psycopg2
 
 
 app = Flask(__name__)
 heroku = Heroku(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgres://uhnpqdclftwqci:eab49280c1d528eb1429cc0de8abeec33515e12e7ccf383885c4954bae558987@ec2-52-200-119-0.compute-1.amazonaws.com:5432/d1d762oi0jc1qm'
+# remember that postgress on line 15 is an add on in heroku. Link the addon to your app in heroku
+# and then grab the URI in settings to get the database link on line 15.
 
 CORS(app)
 
@@ -25,10 +29,12 @@ class Todo(db.Model):
     title = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(100), nullable=False)
 
+
     def __init__(self, title, done, category):
         self.title = title
         self.done = done
         self.category = category
+
 
 class TodoSchema(ma.Schema):
     class Meta:
