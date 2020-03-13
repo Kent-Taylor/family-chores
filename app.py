@@ -11,10 +11,17 @@ import psycopg2
 app = Flask(__name__)
 heroku = Heroku(app)
 
+# basedir = os.path.abspath(os.path.dirname(__file__))
+# app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = 'postgres://uhnpqdclftwqci:eab49280c1d528eb1429cc0de8abeec33515e12e7ccf383885c4954bae558987@ec2-52-200-119-0.compute-1.amazonaws.com:5432/d1d762oi0jc1qm'
-# remember that postgress on line 15 is an add on in heroku. Link the addon to your app in heroku
-# and then grab the URI in settings to get the database link on line 15.
+# # remember that postgress on line 15 is an add on in heroku. Link the addon to your app in heroku
+# # and then grab the URI in settings to get the database link on line 15.
+
+# DATABASE_URL = os.environ['postgres://uhnpqdclftwqci:eab49280c1d528eb1429cc0de8abeec33515e12e7ccf383885c4954bae558987@ec2-52-200-119-0.compute-1.amazonaws.com:5432/d1d762oi0jc1qm']
+
+# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 CORS(app)
 
